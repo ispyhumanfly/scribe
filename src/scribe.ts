@@ -93,7 +93,14 @@ interface ComponentSchema {
 
 const dbConnectionConfig = async () => {
     let pass: string | (() => Promise<string>) = argv.dbPass
-    let ssl: any = argv.useSSL
+    // NOTE: If you want strict cert checking this should be updated to take paths to ca certs
+    // https://node-postgres.com/features/ssl#self-signed-cert
+    let ssl = argv.useSSL
+        ? {
+              rejectUnauthorized: false
+          }
+        : undefined
+
     if (argv.useIamConnection) {
         try {
             const signer = new Signer({
