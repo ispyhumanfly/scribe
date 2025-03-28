@@ -20,14 +20,14 @@
     },
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/spytech/scribe.git"
+        "url": "git+https://github.com/ispyhumanfly/scribe.git"
     },
     "author": "Logikgate",
     "license": "MIT",
     "bugs": {
-        "url": "https://github.com/spytech/scribe/issues"
+        "url": "https://github.com/ispyhumanfly/scribe/issues"
     },
-    "homepage": "https://github.com/spytech/scribe#readme",
+    "homepage": "https://github.com/ispyhumanfly/scribe#readme",
     "dependencies": {
         "@aws-sdk/rds-signer": "3.750.0",
         "@redis/client": "^1.2.0",
