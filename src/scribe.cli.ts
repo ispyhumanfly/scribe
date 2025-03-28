@@ -4,7 +4,7 @@ import os from "os"
 
 import { createServer, tryCreateDb } from "./scribe.js"
 
-if (cluster.isMaster) {
+if (cluster.isPrimary) {
     tryCreateDb()
         .then(() => {
             const cores = os.cpus()
