@@ -78,13 +78,6 @@ jobs:
                   name: Publish package
                   command: npm publish
 
-    build-node14-postgres9:
-        <<: *common-build
-        docker:
-            - image: cimg/node:14.20.0
-            - image: redis
-            - *image-postgres-9
-
     build-node16-postgres9:
         <<: *common-build
         docker:
@@ -98,13 +91,6 @@ jobs:
             - image: cimg/node:18.7.0
             - image: redis
             - *image-postgres-9
-
-    build-node14-postgres10:
-        <<: *common-build
-        docker:
-            - image: cimg/node:14.20.0
-            - image: redis
-            - *image-postgres-10
 
     build-node16-postgres10:
         <<: *common-build
@@ -120,13 +106,6 @@ jobs:
             - image: redis
             - *image-postgres-10
 
-    build-node14-postgres11:
-        <<: *common-build
-        docker:
-            - image: cimg/node:14.20.0
-            - image: redis
-            - *image-postgres-11
-
     build-node16-postgres11:
         <<: *common-build
         docker:
@@ -140,13 +119,6 @@ jobs:
             - image: cimg/node:18.7.0
             - image: redis
             - *image-postgres-11
-
-    build-node14-postgres12:
-        <<: *common-build
-        docker:
-            - image: cimg/node:14.20.0
-            - image: redis
-            - *image-postgres-12
 
     build-node16-postgres12:
         <<: *common-build
@@ -170,38 +142,26 @@ workflows:
                   <<: *filter-run-always
             - build-node16-postgres9:
                   <<: *filter-run-always
-            - build-node14-postgres9:
-                  <<: *filter-run-always
             - build-node18-postgres10:
                   <<: *filter-run-always
             - build-node16-postgres10:
-                  <<: *filter-run-always
-            - build-node14-postgres10:
                   <<: *filter-run-always
             - build-node18-postgres11:
                   <<: *filter-run-always
             - build-node16-postgres11:
                   <<: *filter-run-always
-            - build-node14-postgres11:
-                  <<: *filter-run-always
             - build-node18-postgres12:
                   <<: *filter-run-always
             - build-node16-postgres12:
-                  <<: *filter-run-always
-            - build-node14-postgres12:
                   <<: *filter-run-always
             - deploy:
                   requires:
                       - build-node18-postgres9
                       - build-node16-postgres9
-                      - build-node14-postgres9
                       - build-node18-postgres10
                       - build-node16-postgres10
-                      - build-node14-postgres10
                       - build-node18-postgres11
                       - build-node16-postgres11
-                      - build-node14-postgres11
                       - build-node18-postgres12
                       - build-node16-postgres12
-                      - build-node14-postgres12
                   <<: *filter-run-on-master-and-version-tag-only
