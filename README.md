@@ -156,34 +156,103 @@ Components can be:
 For example, an e-commerce system might be modeled as:
 
 ```typescript
-// Base user component
-POST /users
+// Product component schema
 {
-  "name": "John Doe",
-  "email": "john@example.com",
-  "age": 30
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "type": "object",
+    "required": ["name", "price", "category"],
+    "properties": {
+        "name": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 100
+        },
+        "price": {
+            "type": "number",
+            "minimum": 0
+        },
+        "category": {
+            "type": "string",
+            "enum": ["electronics", "clothing", "books"]
+        },
+        "description": {
+            "type": "string",
+            "maxLength": 1000
+        },
+        "tags": {
+            "type": "array",
+            "items": {
+                "type": "string"
+            }
+        }
+    }
 }
 
-// User profile as a subcomponent
-POST /users/profile
+// Product inventory subcomponent schema
 {
-  "avatar": "https://...",
-  "bio": "Software engineer",
-  "location": "San Francisco"
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "type": "object",
+    "required": ["product_id", "sku", "stock_level"],
+    "properties": {
+        "product_id": {
+            "type": "integer",
+            "description": "Reference to the parent Product component"
+        },
+        "sku": {
+            "type": "string",
+            "pattern": "^[A-Z0-9-]+$"
+        },
+        "stock_level": {
+            "type": "integer",
+            "minimum": 0
+        },
+        "warehouse": {
+            "type": "object",
+            "properties": {
+                "location": {
+                    "type": "string"
+                },
+                "section": {
+                    "type": "string"
+                },
+                "bin": {
+                    "type": "string"
+                }
+            }
+        },
+        "reorder_point": {
+            "type": "integer",
+            "minimum": 0
+        }
+    }
 }
 
-// Product component with inventory subcomponent
+// Creating a product
 POST /products
 {
-  "name": "Gaming Laptop",
-  "price": 1299.99
+    "data": {
+        "name": "Gaming Laptop",
+        "price": 1299.99,
+        "category": "electronics",
+        "description": "High-performance gaming laptop with RTX 3080",
+        "tags": ["gaming", "laptop", "high-end"]
+    }
 }
 
+// Creating product inventory
 POST /products/inventory
 {
-  "sku": "GL-2023",
-  "stockLevel": 50,
-  "warehouse": "SF-1"
+    "data": {
+        "product_id": 1,
+        "sku": "GL-2023",
+        "stock_level": 50,
+        "warehouse": {
+            "location": "SF-1",
+            "section": "Electronics",
+            "bin": "A-123"
+        },
+        "reorder_point": 10
+    }
 }
 ```
 
