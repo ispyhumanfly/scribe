@@ -9,7 +9,145 @@ Scribe is a RESTful API server that brings component-based architecture to data 
 
 ## How Data Components Work
 
-In Scribe, a component represents a distinct data model with its own schema, validation rules, and history tracking. Components can be:
+In Scribe, a component represents a distinct data model with its own schema, validation rules, and history tracking. Components are defined using JSON Schema, providing a powerful and flexible way to validate and structure your data.
+
+### Component Schema Definition
+
+Each component in Scribe is defined by a JSON Schema that specifies:
+
+-   Required fields
+-   Data types
+-   Validation rules
+-   Default values
+-   Custom formats
+
+For example, a Users component and its Profile subcomponent might be defined as:
+
+```json
+// Users.schema.json
+{
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "type": "object",
+    "required": ["name", "email", "status"],
+    "properties": {
+        "name": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 100
+        },
+        "email": {
+            "type": "string",
+            "format": "email"
+        },
+        "status": {
+            "type": "string",
+            "enum": ["active", "inactive", "suspended"]
+        },
+        "role": {
+            "type": "string",
+            "enum": ["admin", "user", "guest"]
+        },
+        "last_login": {
+            "type": "string",
+            "format": "date-time"
+        }
+    }
+}
+
+// Users/profile.schema.json
+{
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "type": "object",
+    "required": ["user_id", "avatar_url"],
+    "properties": {
+        "user_id": {
+            "type": "integer",
+            "description": "Reference to the parent Users component"
+        },
+        "avatar_url": {
+            "type": "string",
+            "format": "uri"
+        },
+        "bio": {
+            "type": "string",
+            "maxLength": 500
+        },
+        "location": {
+            "type": "object",
+            "properties": {
+                "city": {
+                    "type": "string"
+                },
+                "country": {
+                    "type": "string"
+                },
+                "timezone": {
+                    "type": "string"
+                }
+            }
+        },
+        "preferences": {
+            "type": "object",
+            "properties": {
+                "theme": {
+                    "type": "string",
+                    "enum": ["light", "dark", "system"]
+                },
+                "notifications": {
+                    "type": "object",
+                    "properties": {
+                        "email": {
+                            "type": "boolean"
+                        },
+                        "push": {
+                            "type": "boolean"
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+```
+
+When creating records, the data is automatically wrapped in the default schema structure:
+
+```typescript
+// Creating a user
+POST /users
+{
+    "data": {
+        "name": "John Doe",
+        "email": "john@example.com",
+        "status": "active",
+        "role": "user"
+    }
+}
+
+// Creating a user profile
+POST /users/profile
+{
+    "data": {
+        "user_id": 1,
+        "avatar_url": "https://example.com/avatars/john.jpg",
+        "bio": "Software engineer and coffee enthusiast",
+        "location": {
+            "city": "San Francisco",
+            "country": "USA",
+            "timezone": "America/Los_Angeles"
+        },
+        "preferences": {
+            "theme": "dark",
+            "notifications": {
+                "email": true,
+                "push": false
+            }
+        }
+    }
+}
+```
+
+Components can be:
 
 -   **Base Components**: Like `users` or `products`
 -   **Subcomponents**: Extensions of base components like `users/profile` or `products/inventory`
@@ -22,7 +160,8 @@ For example, an e-commerce system might be modeled as:
 POST /users
 {
   "name": "John Doe",
-  "email": "john@example.com"
+  "email": "john@example.com",
+  "age": 30
 }
 
 // User profile as a subcomponent
@@ -61,6 +200,16 @@ This component-based approach makes it natural to:
 -   Maintain data integrity
 -   Track changes over time
 -   Scale your data architecture
+
+### Default Schema Fields
+
+Every component in Scribe automatically includes these base fields:
+
+-   `data`: The main component data object
+-   `date_created`: Timestamp of creation
+-   `date_modified`: Timestamp of last modification
+-   `created_by`: ID of the user who created the record
+-   `modified_by`: ID of the user who last modified the record
 
 ## Features
 
