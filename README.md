@@ -290,6 +290,61 @@ const getChildRecords = async (id: string) => {
 }
 ```
 
+### SQL Queries
+
+Scribe provides a direct SQL endpoint for advanced querying capabilities:
+
+```typescript
+// Execute a custom SQL query
+const executeSqlQuery = async (query: string) => {
+    const response = await scribeClient.post("/sql", {
+        query: query
+    })
+    return response.data
+}
+
+// Example: Complex join query
+const getUsersWithOrders = async () => {
+    const query = `
+        SELECT u.*, o.*
+        FROM users u
+        LEFT JOIN orders o ON u.id = o.user_id
+        WHERE o.status = 'completed'
+        ORDER BY u.created_at DESC
+    `
+    return executeSqlQuery(query)
+}
+
+// Example: Aggregation query
+const getUserStats = async () => {
+    const query = `
+        SELECT 
+            COUNT(*) as total_users,
+            AVG(age) as average_age,
+            MAX(created_at) as newest_user
+        FROM users
+    `
+    return executeSqlQuery(query)
+}
+
+// Example: Subquery with filtering
+const getActiveUsersWithRecentOrders = async () => {
+    const query = `
+        SELECT *
+        FROM users
+        WHERE id IN (
+            SELECT DISTINCT user_id
+            FROM orders
+            WHERE created_at > NOW() - INTERVAL '30 days'
+        )
+        AND status = 'active'
+    `
+    return executeSqlQuery(query)
+}
+```
+
+> **Note**: The SQL endpoint should only be used in trusted environments as it provides direct database access. Make sure to properly validate and sanitize any user input before using it in queries.
+
 ## API Endpoints
 
 -   `POST /:component` - Create a new record
