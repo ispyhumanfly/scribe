@@ -1,8 +1,7 @@
 [![CircleCI](https://circleci.com/gh/ispyhumanfly/scribe/tree/master.svg?style=svg)](https://circleci.com/gh/ispyhumanfly/scribe/tree/master)
 [![Known Vulnerabilities](https://snyk.io/test/github/ispyhumanfly/scribe/badge.svg)](https://snyk.io/test/github/ispyhumanfly/scribe)
-[![npm (scoped)](https://img.shields.io/npm/v/@ispyhumanfly/scribe.svg)](https://www.npmjs.com/package/@ispyhumanfly/scribe)
-[![NpmLicense](https://img.shields.io/npm/l/@ispyhumanfly/scribe.svg)](https://github.com/ispyhumanfly/scribe/blob/master/LICENSE)
-[![dependencies Status](https://david-dm.org/ispyhumanfly/scribe/status.svg)](https://david-dm.org/ispyhumanfly/scribe)
+[![npm (scoped)](https://img.shields.io/npm/v/@spytech/scribe.svg)](https://www.npmjs.com/package/@spytech/scribe)
+[![NpmLicense](https://img.shields.io/npm/l/@spytech/scribe.svg)](https://github.com/ispyhumanfly/scribe/blob/master/LICENSE)
 
 # Scribe
 
@@ -17,8 +16,19 @@ Scribe is a flexible RESTful API server that provides a powerful data storage an
 -   **Complex Queries**: Support for filtering, grouping, and relationships
 -   **Time Machine**: Ability to view data as it existed at any point in time
 -   **Multi-language Support**: Easy to use from any programming language
+-   **Flexible SQL Queries**: Support for complex SQL operations including joins, aggregations, and subqueries
+-   **Query Parameter Support**: Easy filtering, sorting, and pagination through URL parameters
+-   **Transaction Support**: Atomic operations for data integrity
+-   **Dynamic Query Building**: API for constructing complex queries programmatically
+-   **Raw SQL Access**: Direct SQL execution for advanced use cases
 
 ## Installation
+
+### Prerequisites
+
+-   Node.js >= 12
+-   PostgreSQL >= 9.6.10
+-   Redis (optional, for schema caching)
 
 ```bash
 npm install scribe
