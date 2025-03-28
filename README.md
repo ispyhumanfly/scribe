@@ -7,7 +7,7 @@
 
 Scribe is a RESTful API server that brings component-based architecture to data modeling. Just as modern frontend frameworks break down UIs into reusable components, Scribe organizes your data into logical, self-contained components and subcomponents that can be composed and related to each other.
 
-## How Components Work
+## How Data Components Work
 
 In Scribe, a component represents a distinct data model with its own schema, validation rules, and history tracking. Components can be:
 
@@ -86,7 +86,7 @@ This component-based approach makes it natural to:
 -   Redis (optional, for schema caching)
 
 ```bash
-npm install scribe
+npm install @spytech/scribe
 ```
 
 ## Configuration
