@@ -5,7 +5,62 @@
 
 # Scribe
 
-Scribe is a flexible RESTful API server that provides a powerful data storage and retrieval system with built-in schema validation, history tracking, and advanced querying capabilities. It's designed to be simple to use while providing robust features for data management.
+Scribe is a RESTful API server that brings component-based architecture to data modeling. Just as modern frontend frameworks break down UIs into reusable components, Scribe organizes your data into logical, self-contained components and subcomponents that can be composed and related to each other.
+
+## How Components Work
+
+In Scribe, a component represents a distinct data model with its own schema, validation rules, and history tracking. Components can be:
+
+-   **Base Components**: Like `users` or `products`
+-   **Subcomponents**: Extensions of base components like `users/profile` or `products/inventory`
+-   **Related**: Through parent-child relationships or references
+
+For example, an e-commerce system might be modeled as:
+
+```typescript
+// Base user component
+POST /users
+{
+  "name": "John Doe",
+  "email": "john@example.com"
+}
+
+// User profile as a subcomponent
+POST /users/profile
+{
+  "avatar": "https://...",
+  "bio": "Software engineer",
+  "location": "San Francisco"
+}
+
+// Product component with inventory subcomponent
+POST /products
+{
+  "name": "Gaming Laptop",
+  "price": 1299.99
+}
+
+POST /products/inventory
+{
+  "sku": "GL-2023",
+  "stockLevel": 50,
+  "warehouse": "SF-1"
+}
+```
+
+Each component and subcomponent automatically gets:
+
+-   Schema validation
+-   Version history tracking
+-   Relationship querying
+-   Time machine capabilities
+
+This component-based approach makes it natural to:
+
+-   Organize complex data models
+-   Maintain data integrity
+-   Track changes over time
+-   Scale your data architecture
 
 ## Features
 
