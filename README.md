@@ -9,11 +9,11 @@ Scribe is a RESTful API server that brings component-based architecture to data 
 
 ## How Data Components Work
 
-In Scribe, a component represents a distinct data model with its own schema, validation rules, and history tracking. Components are defined using JSON Schema, providing a powerful and flexible way to validate and structure your data.
+In Scribe, a component represents a distinct data model with its own schema, validation rules, and history tracking. Components are defined using JSON Schema definitions, providing a powerful and flexible way to validate and structure your data on a per component basis.
 
 ### Component Schema Definition
 
-Each component in Scribe is defined by a JSON Schema that specifies:
+Each component in Scribe is defined by a JSON Schema definition that specifies:
 
 -   Required fields
 -   Data types
@@ -54,7 +54,7 @@ For example, a Users component and its Profile subcomponent might be defined as:
     }
 }
 
-// Users/profile.schema.json
+// Users/Profile/Profile.schema.json
 {
     "$schema": "http://json-schema.org/draft-07/schema",
     "type": "object",
