@@ -5,7 +5,27 @@
 
 # Scribe
 
-Scribe is a RESTful API server that brings component-based architecture to data modeling. Just as modern frontend frameworks break down UIs into reusable components, Scribe organizes your data into logical, self-contained components and subcomponents that can be composed and related to each other.
+Scribe is a RESTful API server that brings component-based architecture to data modeling. Just as modern frontend frameworks like Vue and Flight organize their applications into components, Scribe organizes your data into logical, self-contained components and subcomponents that can be composed and related to each other.
+
+## Project Structure
+
+Scribe assumes your application follows a component-based directory structure:
+
+```
+my-app/
+├── components/           # Application components
+│   ├── Users/          # User component directory
+│   │   ├── Users.schema.json    # Component schema definition
+│   │   └── Users.backend.ts     # Backend routes and logic
+│   ├── Products/       # Product component directory
+│   │   ├── Products.schema.json # Component schema definition
+│   │   └── Products.backend.ts  # Backend routes and logic
+│   └── Orders/         # Order component directory
+│       ├── Orders.schema.json   # Component schema definition
+│       └── Orders.backend.ts    # Backend routes and logic
+├── assets/             # Static assets
+└── dist/              # Production build output
+```
 
 ## How Data Components Work
 
@@ -24,7 +44,7 @@ Each component in Scribe is defined by a JSON Schema definition that specifies:
 For example, a Users component and its Profile subcomponent might be defined as:
 
 ```json
-// Users.schema.json
+// components/Users/Users.schema.json
 {
     "$schema": "http://json-schema.org/draft-07/schema",
     "type": "object",
@@ -54,7 +74,7 @@ For example, a Users component and its Profile subcomponent might be defined as:
     }
 }
 
-// Users/Profile/Profile.schema.json
+// components/Users/Profile/Profile.schema.json
 {
     "$schema": "http://json-schema.org/draft-07/schema",
     "type": "object",
@@ -149,14 +169,14 @@ POST /users/profile
 
 Components can be:
 
--   **Base Components**: Like `users` or `products`
--   **Subcomponents**: Extensions of base components like `users/profile` or `products/inventory`
+-   **Base Components**: Like `Users` or `Products`
+-   **Subcomponents**: Extensions of base components like `Users/Profile` or `Products/Inventory`
 -   **Related**: Through parent-child relationships or references
 
 For example, an e-commerce system might be modeled as:
 
-```typescript
-// Product component schema
+```json
+// components/Products/Products.schema.json
 {
     "$schema": "http://json-schema.org/draft-07/schema",
     "type": "object",
@@ -188,7 +208,7 @@ For example, an e-commerce system might be modeled as:
     }
 }
 
-// Product inventory subcomponent schema
+// components/Products/Inventory/Inventory.schema.json
 {
     "$schema": "http://json-schema.org/draft-07/schema",
     "type": "object",
@@ -224,34 +244,6 @@ For example, an e-commerce system might be modeled as:
             "type": "integer",
             "minimum": 0
         }
-    }
-}
-
-// Creating a product
-POST /products
-{
-    "data": {
-        "name": "Gaming Laptop",
-        "price": 1299.99,
-        "category": "electronics",
-        "description": "High-performance gaming laptop with RTX 3080",
-        "tags": ["gaming", "laptop", "high-end"]
-    }
-}
-
-// Creating product inventory
-POST /products/inventory
-{
-    "data": {
-        "product_id": 1,
-        "sku": "GL-2023",
-        "stock_level": 50,
-        "warehouse": {
-            "location": "SF-1",
-            "section": "Electronics",
-            "bin": "A-123"
-        },
-        "reorder_point": 10
     }
 }
 ```
