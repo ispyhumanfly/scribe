@@ -357,7 +357,7 @@ const getChildRecords = async (id: string) => {
 
 ### SQL Queries
 
-Scribe provides a direct SQL endpoint for advanced querying capabilities:
+Scribe provides a direct SQL endpoint for advanced querying capabilities. All queries are executed against PostgreSQL 9.x and above:
 
 ```typescript
 // Execute a custom SQL query
@@ -368,7 +368,7 @@ const executeSqlQuery = async (query: string) => {
     return response.data
 }
 
-// Example: Complex join query
+// Example: Basic JOIN query (compatible with all PostgreSQL versions)
 const getUsersWithOrders = async () => {
     const query = `
         SELECT u.*, o.*
@@ -380,35 +380,113 @@ const getUsersWithOrders = async () => {
     return executeSqlQuery(query)
 }
 
-// Example: Aggregation query
-const getUserStats = async () => {
+// Example: Aggregation with GROUP BY (compatible with all PostgreSQL versions)
+const getOrderStats = async () => {
     const query = `
         SELECT 
-            COUNT(*) as total_users,
-            AVG(age) as average_age,
-            MAX(created_at) as newest_user
-        FROM users
+            user_id,
+            COUNT(*) as total_orders,
+            SUM(amount) as total_amount,
+            AVG(amount) as average_order_value
+        FROM orders
+        WHERE status = 'completed'
+        GROUP BY user_id
+        HAVING COUNT(*) > 5
+        ORDER BY total_amount DESC
     `
     return executeSqlQuery(query)
 }
 
-// Example: Subquery with filtering
-const getActiveUsersWithRecentOrders = async () => {
+// Example: Window functions (available in PostgreSQL 9.0+)
+const getTopCustomers = async () => {
     const query = `
-        SELECT *
-        FROM users
-        WHERE id IN (
-            SELECT DISTINCT user_id
+        SELECT 
+            u.name,
+            u.email,
+            COUNT(o.id) as order_count,
+            SUM(o.amount) as total_spent,
+            ROW_NUMBER() OVER (ORDER BY SUM(o.amount) DESC) as rank
+        FROM users u
+        JOIN orders o ON u.id = o.user_id
+        WHERE o.status = 'completed'
+        GROUP BY u.id, u.name, u.email
+        ORDER BY total_spent DESC
+        LIMIT 10
+    `
+    return executeSqlQuery(query)
+}
+
+// Example: Common Table Expression (CTE) with recursive query (available in PostgreSQL 8.4+)
+const getOrderHierarchy = async (orderId: string) => {
+    const query = `
+        WITH RECURSIVE order_tree AS (
+            -- Base case: get the initial order
+            SELECT 
+                id,
+                parent_order_id,
+                amount,
+                1 as level
             FROM orders
-            WHERE created_at > NOW() - INTERVAL '30 days'
+            WHERE id = $1
+            
+            UNION ALL
+            
+            -- Recursive case: get child orders
+            SELECT 
+                o.id,
+                o.parent_order_id,
+                o.amount,
+                ot.level + 1
+            FROM orders o
+            JOIN order_tree ot ON o.parent_order_id = ot.id
         )
-        AND status = 'active'
+        SELECT * FROM order_tree
+        ORDER BY level, id
+    `
+    return executeSqlQuery(query)
+}
+
+// Example: JSON operations (available in PostgreSQL 9.2+)
+const getProductDetails = async () => {
+    const query = `
+        SELECT 
+            p.id,
+            p.name,
+            p.price,
+            p.metadata->>'category' as category,
+            p.metadata->>'brand' as brand,
+            (p.metadata->>'rating')::float as rating
+        FROM products p
+        WHERE p.metadata->>'category' = 'electronics'
+        AND (p.metadata->>'rating')::float >= 4.5
+        ORDER BY rating DESC
+    `
+    return executeSqlQuery(query)
+}
+
+// Example: Date/Time operations (compatible with all PostgreSQL versions)
+const getRecentActivity = async () => {
+    const query = `
+        SELECT 
+            u.name,
+            o.id as order_id,
+            o.created_at,
+            EXTRACT(EPOCH FROM (o.created_at - NOW())) / 3600 as hours_ago
+        FROM users u
+        JOIN orders o ON u.id = o.user_id
+        WHERE o.created_at >= NOW() - INTERVAL '7 days'
+        ORDER BY o.created_at DESC
     `
     return executeSqlQuery(query)
 }
 ```
 
-> **Note**: The SQL endpoint should only be used in trusted environments as it provides direct database access. Make sure to properly validate and sanitize any user input before using it in queries.
+> **Note**: The SQL endpoint should only be used in trusted environments as it provides direct database access. Make sure to:
+>
+> -   Properly validate and sanitize any user input before using it in queries
+> -   Use parameterized queries to prevent SQL injection
+> -   Consider query performance and add appropriate indexes
+> -   Test queries against your specific PostgreSQL version
 
 ## API Endpoints
 
